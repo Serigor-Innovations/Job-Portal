@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI job feed</title>
+<style>
+  :root {
+    --ink: #1c1c1a;
+    --ink-soft: #5c5b54;
+    --line: #e4e2da;
+    --paper: #fafaf7;
+    --card: #ffffff;
+    --accent: #2f5d50;
+    --accent-soft: #e7efec;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    font-size: 14px;
+  }
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .filters input, .filters select {
+    font-family: inherit;
+    font-size: 13.5px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--ink);
+    width: 100%;
+  }
+  .filters input:focus, .filters select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .filter-row-wide input { grid-column: 1 / -1; }
+  .filter-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .clear-btn {
+    font-family: inherit;
+    font-size: 13px;
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .clear-btn:hover { text-decoration: underline; }
+  #status {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+  }
+  table.job-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    white-space: nowrap;
+  }
+  .job-table th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+  }
+  .job-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .job-table tr:last-child td { border-bottom: none; }
+  .job-table tr:hover td { background: var(--accent-soft); }
+  .job-table td.title-cell {
+    white-space: normal;
+    min-width: 220px;
+    font-weight: 500;
+  }
+  .job-table td.desc-cell {
+    white-space: normal;
+    color: var(--ink-soft);
+    font-size: 13px;
+    max-width: 320px;
+  }
+  .badge {
+    font-size: 11.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .apply-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .apply-btn:hover { opacity: 0.9; }
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AI job feed</h1>
+    <p>Real postings from company career sites, updated regularly. Only jobs from the last 10 days are shown.</p>
+  </header>
+
+  <div class="filters filter-row-wide">
+    <input id="titleFilter" type="text" placeholder="Search title, e.g. LLM engineer">
+  </div>
+
+  <div class="filters">
+    <input id="companyFilter" type="text" placeholder="Company">
+    <select id="locationFilter"><option value="">All locations</option></select>
+    <select id="remoteFilter">
+      <option value="">Remote or onsite</option>
+      <option value="Yes">Remote only</option>
+      <option value="No">Onsite only</option>
+    </select>
+    <select id="seniorityFilter"><option value="">All experience levels</option></select>
+    <select id="employmentTypeFilter"><option value="">All job types</option></select>
+    <select id="industryFilter"><option value="">All industries</option></select>
+    <input id="tagsFilter" type="text" placeholder="Skill or tag, e.g. PyTorch">
+    <input id="salaryMinFilter" type="number" placeholder="Min salary">
+    <select id="daysFilter">
+      <option value="10" selected>Posted in last 10 days</option>
+      <option value="5">Posted in last 5 days</option>
+      <option value="3">Posted in last 3 days</option>
+      <option value="1">Posted today</option>
+    </select>
+  </div>
+
+  <div class="filter-actions">
+    <span id="status">Loading jobs…</span>
+    <button class="clear-btn" id="clearFilters">Clear all filters</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Company</th>
+          <th>Location</th>
+          <th>Remote</th>
+          <th>Level</th>
+          <th>Type</th>
+          <th>Salary</th>
+          <th>Industry</th>
+          <th>Description</th>
+          <th>Posted</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="jobList"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Paste the web app URL from your Apps Script deployment here.
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwh-l8K8fCTgRU-VdejYZviQrBcfLTk70AmfjGofnLM-x-LgUo9QUf11Cga0bFp76DAhg/exec';
+
+  const jobListEl = document.getElementById('jobList');
+  const statusEl = document.getElementById('status');
+  const titleInput = document.getElementById('titleFilter');
+  const companyInput = document.getElementById('companyFilter');
+  const locationSelect = document.getElementById('locationFilter');
+  const remoteSelect = document.getElementById('remoteFilter');
+  const senioritySelect = document.getElementById('seniorityFilter');
+  const employmentTypeSelect = document.getElementById('employmentTypeFilter');
+  const industrySelect = document.getElementById('industryFilter');
+  const tagsInput = document.getElementById('tagsFilter');
+  const salaryMinInput = document.getElementById('salaryMinFilter');
+  const daysSelect = document.getElementById('daysFilter');
+  const clearBtn = document.getElementById('clearFilters');
+
+  const allFilterInputs = [
+    titleInput, companyInput, locationSelect, remoteSelect,
+    senioritySelect, employmentTypeSelect, industrySelect,
+    tagsInput, salaryMinInput, daysSelect
+  ];
+
+  let allJobs = [];
+
+  function daysAgo(isoDate) {
+    if (!isoDate) return null;
+    const diffMs = Date.now() - new Date(isoDate).getTime();
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  }
+
+  function renderJobs(jobs) {
+    jobListEl.innerHTML = '';
+
+    if (!jobs.length) {
+      jobListEl.innerHTML = '<tr><td colspan="11" class="empty">No jobs match these filters right now.</td></tr>';
+      return;
+    }
+
+    jobs.forEach(function (job) {
+      const age = daysAgo(job.datePosted);
+      const ageLabel = age === null ? '—' : age === 0 ? 'Today' : age + 'd ago';
+      const salaryBit = job.salaryMin || job.salaryMax
+        ? [job.salaryMin, job.salaryMax].filter(Boolean).join('–') + (job.salaryCurrency ? ' ' + job.salaryCurrency : '')
+        : '—';
+      const desc = (job.description || '').slice(0, 140) + ((job.description || '').length > 140 ? '…' : '');
+
+      const row = document.createElement('tr');
+      row.innerHTML =
+        '<td class="title-cell"></td>' +   // 0 title
+        '<td></td>' +                       // 1 company
+        '<td></td>' +                       // 2 location
+        '<td></td>' +                       // 3 remote
+        '<td><span class="badge"></span></td>' + // 4 level
+        '<td></td>' +                       // 5 type
+        '<td></td>' +                       // 6 salary
+        '<td></td>' +                       // 7 industry
+        '<td class="desc-cell"></td>' +     // 8 description
+        '<td></td>' +                       // 9 posted
+        '<td><a class="apply-btn" target="_blank" rel="noopener">Apply →</a></td>'; // 10 apply
+
+      const cells = row.querySelectorAll('td');
+      cells[0].textContent = job.title || 'Untitled role';
+      cells[1].textContent = job.company || '—';
+      cells[2].textContent = job.location || '—';
+      cells[3].textContent = job.remote || '—';
+      cells[4].querySelector('.badge').textContent = job.seniority || '—';
+      cells[5].textContent = job.employmentType || '—';
+      cells[6].textContent = salaryBit;
+      cells[7].textContent = job.industry || '—';
+      cells[8].textContent = desc || '—';
+      cells[9].textContent = ageLabel;
+      cells[10].querySelector('.apply-btn').href = job.applyUrl || '#';
+
+      jobListEl.appendChild(row);
+    });
+  }
+
+  // Fills a <select> with unique, non-empty values found in the data.
+  function populateOptions(selectEl, jobs, field) {
+    const values = Array.from(new Set(
+      jobs.map(function (j) { return j[field]; }).filter(Boolean)
+    )).sort();
+    values.forEach(function (val) {
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = val;
+      selectEl.appendChild(opt);
+    });
+  }
+
+  function populateAllDropdowns(jobs) {
+    populateOptions(locationSelect, jobs, 'location');
+    populateOptions(senioritySelect, jobs, 'seniority');
+    populateOptions(employmentTypeSelect, jobs, 'employmentType');
+    populateOptions(industrySelect, jobs, 'industry');
+  }
+
+  function applyFilters() {
+    const titleQ = titleInput.value.trim().toLowerCase();
+    const companyQ = companyInput.value.trim().toLowerCase();
+    const locQ = locationSelect.value;
+    const remoteQ = remoteSelect.value;
+    const seniorityQ = senioritySelect.value;
+    const employmentTypeQ = employmentTypeSelect.value;
+    const industryQ = industrySelect.value;
+    const tagsQ = tagsInput.value.trim().toLowerCase();
+    const salaryMinQ = salaryMinInput.value ? Number(salaryMinInput.value) : null;
+    const maxDays = Number(daysSelect.value);
+
+    const filtered = allJobs.filter(function (job) {
+      if (titleQ && !(job.title || '').toLowerCase().includes(titleQ)) return false;
+      if (companyQ && !(job.company || '').toLowerCase().includes(companyQ)) return false;
+      if (locQ && job.location !== locQ) return false;
+      if (remoteQ && job.remote !== remoteQ) return false;
+      if (seniorityQ && job.seniority !== seniorityQ) return false;
+      if (employmentTypeQ && job.employmentType !== employmentTypeQ) return false;
+      if (industryQ && job.industry !== industryQ) return false;
+      if (tagsQ && !(job.tags || '').toLowerCase().includes(tagsQ)) return false;
+
+      if (salaryMinQ !== null) {
+        const jobSalary = Number(job.salaryMax || job.salaryMin);
+        if (isNaN(jobSalary) || jobSalary < salaryMinQ) return false;
+      }
+
+      const age = daysAgo(job.datePosted);
+      if (age !== null && age > maxDays) return false;
+
+      return true;
+    });
+
+    renderJobs(filtered);
+  }
+
+  function clearAllFilters() {
+    allFilterInputs.forEach(function (el) {
+      if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
+    });
+    daysSelect.value = '10';
+    applyFilters();
+  }
+
+  function loadJobs() {
+    fetch(SCRIPT_URL)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        allJobs = data.jobs || [];
+        statusEl.textContent = allJobs.length + ' jobs from the last 10 days';
+        populateAllDropdowns(allJobs);
+        renderJobs(allJobs);
+      })
+      .catch(function (err) {
+        statusEl.textContent = 'Could not load jobs. Check SCRIPT_URL is set correctly.';
+        console.error(err);
+      });
+  }
+
+  [titleInput, companyInput, tagsInput, salaryMinInput].forEach(function (el) {
+    el.addEventListener('input', applyFilters);
+  });
+  [locationSelect, remoteSelect, senioritySelect, employmentTypeSelect, industrySelect, daysSelect]
+    .forEach(function (el) { el.addEventListener('change', applyFilters); });
+  clearBtn.addEventListener('click', clearAllFilters);
+
+  loadJobs();
+</script>
+</body>
+</html>
