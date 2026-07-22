@@ -273,15 +273,6 @@
         const levels = ["1-3", "3-5", "5-10", "8+"];
         const industries = ["Generative AI", "Enterprise Software", "Autonomous Systems", "Healthcare AI", "Fintech"];
 
-        // Real specific job application link targets can be inserted here per item
-        const sampleJobLinks = [
-            "https://www.a.team",
-            "https://www.primeintellect.ai",
-            "https://openai.com/careers",
-            "https://www.anthropic.com/careers",
-            "https://scale.com/careers"
-        ];
-
         let jobsData = [];
 
         for (let i = 1; i <= 100; i++) {
@@ -294,7 +285,8 @@
                 level: levels[(i - 1) % levels.length],
                 type: types[(i - 1) % types.length],
                 industry: industries[(i - 1) % industries.length],
-                applyUrl: sampleJobLinks[(i - 1) % sampleJobLinks.length]
+                // Fixed unique destination URL for every specific row avoiding fallback loops
+                applyUrl: `https://www.allshoreglobal.com/join-as-talent?job_id=${i}`
             });
         }
 
