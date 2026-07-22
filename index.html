@@ -36,8 +36,17 @@
     padding-bottom: 24px;
     margin-bottom: 28px;
   }
+  .logo-container {
+    margin-bottom: 20px;
+  }
+  .logo-container img {
+    height: 42px;
+    width: auto;
+    display: block;
+    /* Optional filter if you need it to pop on dark background, but keeping original colors as provided */
+  }
   header h1 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
     margin: 0 0 8px;
     letter-spacing: -0.02em;
@@ -45,6 +54,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
   }
   header h1 span {
     font-size: 12px;
@@ -194,7 +204,10 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Allshore Global AI Job Feed <span>Live Talent Feed</span></h1>
+    <div class="logo-container">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Allshore Global Logo" id="brandLogo">
+    </div>
+    <h1>AI Job Feed <span>Live Talent Feed</span></h1>
     <p>Real-time AI postings from top global enterprise tech career sites. Showing active opportunities from the last 10 days.</p>
   </header>
 
@@ -251,6 +264,9 @@
 </div>
 
 <script>
+  // Paste your logo URL or link path here (e.g., 'images/logo.png' or full hosted URL)
+  document.getElementById('brandLogo').src = 'YOUR_LOGO_IMAGE_URL_OR_PATH';
+
   // Paste the web app URL from your Apps Script deployment here.
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwh-l8K8fCTgRU-VdejYZviQrBcfLTk70AmfjGofnLM-x-LgUo9QUf11Cga0bFp76DAhg/exec';
 
