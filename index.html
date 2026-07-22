@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,21 +21,6 @@
         .container {
             max-width: 1300px;
             margin: 0 auto;
-        }
-
-        /* Logo Box */
-        .logo-box {
-            background: #ffffff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .logo-box img {
-            height: 28px;
-            display: block;
         }
 
         /* Header Section */
@@ -106,7 +90,6 @@
         .search-bar {
             width: 100%;
             background-color: #111827;
-            border: 1px: solid #1f2937;
             border: 1px solid #1f2937;
             color: #ffffff;
             padding: 12px 16px;
@@ -136,6 +119,7 @@
             align-items: center;
             font-size: 13px;
             margin-bottom: 15px;
+            color: #94a3b8;
         }
 
         .clear-filters {
@@ -144,6 +128,10 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
+        }
+
+        .clear-filters:hover {
+            text-decoration: underline;
         }
 
         /* Jobs Table */
@@ -206,14 +194,7 @@
 <body>
 
     <div class="container">
-        <!-- Logo Area (Restored image container) -->
-        <div class="logo-box">
-            <!-- Replace 'logo.png' with your actual image path or URL if hosted -->
-            <img src="logo.png" alt="Allshore Global Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <span style="display:none; color: #0b0f19; font-weight: bold; font-size: 16px;">Allshore Global</span>
-        </div>
-
-        <!-- Header Section -->
+        <!-- Header Section (No Logo) -->
         <div class="header-section">
             <div class="title-row">
                 <h1>AI Job Feed</h1>
@@ -231,28 +212,32 @@
 
         <!-- Search & Filter Controls -->
         <div class="filters-container">
-            <input type="text" class="search-bar" placeholder="Search role title, e.g. LLM Engineer, AI Agent Developer">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search role title, e.g. LLM Engineer, AI Agent Developer">
             
             <div class="filter-row">
-                <select class="filter-select"><option>Company</option></select>
-                <select class="filter-select"><option>All locations</option></select>
-                <select class="filter-select"><option>Remote or onsite</option></select>
-                <select class="filter-select"><option>All experience levels</option></select>
-                <select class="filter-select"><option>All job types</option></select>
-                <select class="filter-select"><option>All industries</option></select>
-                <input type="text" class="filter-input" placeholder="Skill or stack, e.g. PyTorch">
+                <select id="companyFilter" class="filter-select"><option value="">Company</option></select>
+                <select id="locationFilter" class="filter-select"><option value="">All locations</option></select>
+                <select id="remoteFilter" class="filter-select"><option value="">Remote or onsite</option></select>
+                <select id="levelFilter" class="filter-select"><option value="">All experience levels</option></select>
+                <select id="typeFilter" class="filter-select"><option value="">All job types</option></select>
+                <select id="industryFilter" class="filter-select"><option value="">All industries</option></select>
+                <input type="text" id="skillInput" class="filter-input" placeholder="Skill or stack, e.g. PyTorch">
             </div>
 
             <div class="filter-row" style="grid-template-columns: 180px 180px;">
-                <input type="text" class="filter-input" placeholder="Min salary">
-                <select class="filter-select"><option>Posted in last 10 days</option></select>
+                <input type="text" id="salaryInput" class="filter-input" placeholder="Min salary">
+                <select id="dateFilter" class="filter-select">
+                    <option value="">Posted in last 10 days</option>
+                    <option value="3">Posted in last 3 days</option>
+                    <option value="1">Posted today</option>
+                </select>
             </div>
         </div>
 
         <!-- Results Counter -->
         <div class="results-info">
-            <span>103 jobs from the last 10 days</span>
-            <button class="clear-filters">Clear all filters</button>
+            <span id="resultCount">100 jobs from the last 10 days</span>
+            <button id="clearFiltersBtn" class="clear-filters">Clear all filters</button>
         </div>
 
         <!-- Jobs Listing Table -->
@@ -268,33 +253,135 @@
                         <th>Type</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <a href="#" class="job-title">Senior Independent AI Engineer / Architect</a>
-                        </td>
-                        <td>A.Team</td>
-                        <td>Americas, Europe, Israel</td>
-                        <td>Yes</td>
-                        <td><span class="level-badge">5-10</span></td>
-                        <td>contract</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="#" class="job-title">Applied AI Product Strategy & Revenue Lead</a>
-                        </td>
-                        <td>Prime Intellect</td>
-                        <td>San Francisco</td>
-                        <td>Yes</td>
-                        <td><span class="level-badge">5-10</span></td>
-                        <td>—</td>
-                    </tr>
+                <tbody id="jobTableBody">
+                    <!-- Populated dynamically via JavaScript -->
                 </tbody>
             </table>
         </div>
     </div>
 
+    <script>
+        // Generate 100 realistic mock jobs for the feed
+        const companies = ["A.Team", "Prime Intellect", "OpenAI", "Anthropic", "Scale AI", "Hugging Face", "Cohere", "DeepMind", "DataRobot", "Perplexity"];
+        const locations = ["San Francisco", "New York", "Americas, Europe, Israel", "London", "Remote", "Berlin", "Austin", "Toronto"];
+        const roles = [
+            "Senior Independent AI Engineer / Architect", "Applied AI Product Strategy & Revenue Lead", 
+            "LLM Fine-tuning Specialist", "AI Agent Developer", "Machine Learning Infrastructure Engineer", 
+            "Computer Vision Research Scientist", "NLP Core Engineer", "Prompt Engineer & Evaluator", 
+            "Full Stack AI App Developer", "Deep Learning Research Lead"
+        ];
+        const types = ["contract", "full-time", "part-time"];
+        const levels = ["1-3", "3-5", "5-10", "8+"];
+        const industries = ["Generative AI", "Enterprise Software", "Autonomous Systems", "Healthcare AI", "Fintech"];
+
+        let jobsData = [];
+
+        for (let i = 1; i <= 100; i++) {
+            jobsData.push({
+                id: i,
+                title: `${roles[(i - 1) % roles.length]} (${i})`,
+                company: companies[(i - 1) % companies.length],
+                location: locations[(i - 1) % locations.length],
+                remote: i % 3 === 0 ? "No" : "Yes",
+                level: levels[(i - 1) % levels.length],
+                type: types[(i - 1) % types.length],
+                industry: industries[(i - 1) % industries.length],
+                skill: i % 2 === 0 ? "PyTorch" : "TensorFlow",
+                salary: 100000 + (i * 1500)
+            });
+        }
+
+        const jobTableBody = document.getElementById('jobTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const companyFilter = document.getElementById('companyFilter');
+        const locationFilter = document.getElementById('locationFilter');
+        const remoteFilter = document.getElementById('remoteFilter');
+        const levelFilter = document.getElementById('levelFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const industryFilter = document.getElementById('industryFilter');
+        const resultCount = document.getElementById('resultCount');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+        // Populate dropdown options dynamically
+        function populateDropdowns() {
+            [...new Set(jobsData.map(j => j.company))].forEach(c => companyFilter.innerHTML += `<option value="${c}">${c}</option>`);
+            [...new Set(jobsData.map(j => j.location))].forEach(l => locationFilter.innerHTML += `<option value="${l}">${l}</option>`);
+            [...new Set(jobsData.map(j => j.level))].forEach(lv => levelFilter.innerHTML += `<option value="${lv}">${lv} yrs</option>`);
+            [...new Set(jobsData.map(j => j.type))].forEach(t => typeFilter.innerHTML += `<option value="${t}">${t}</option>`);
+            [...new Set(jobsData.map(j => j.industry))].forEach(ind => industryFilter.innerHTML += `<option value="${ind}">${ind}</option>`);
+        }
+
+        // Render table rows
+        function renderTable(data) {
+            jobTableBody.innerHTML = '';
+            if(data.length === 0) {
+                jobTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px;">No jobs found matching your criteria.</td></tr>`;
+                resultCount.textContent = `0 jobs found`;
+                return;
+            }
+
+            resultCount.textContent = `${data.length} jobs from the last 10 days`;
+            
+            data.forEach(job => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="https://www.allshoreglobal.com/join-as-talent" target="_blank" class="job-title">${job.title}</a></td>
+                    <td>${job.company}</td>
+                    <td>${job.location}</td>
+                    <td>${job.remote}</td>
+                    <td><span class="level-badge">${job.level}</span></td>
+                    <td>${job.type}</td>
+                `;
+                jobTableBody.appendChild(row);
+            });
+        }
+
+        // Filter Logic
+        function filterJobs() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCompany = companyFilter.value;
+            const selectedLocation = locationFilter.value;
+            const selectedRemote = remoteFilter.value;
+            const selectedLevel = levelFilter.value;
+            const selectedType = typeFilter.value;
+            const selectedIndustry = industryFilter.value;
+
+            const filtered = jobsData.filter(job => {
+                const matchesSearch = job.title.toLowerCase().includes(searchTerm) || job.company.toLowerCase().includes(searchTerm);
+                const matchesCompany = !selectedCompany || job.company === selectedCompany;
+                const matchesLocation = !selectedLocation || job.location === selectedLocation;
+                const matchesRemote = !selectedRemote || job.remote === selectedRemote;
+                const matchesLevel = !selectedLevel || job.level === selectedLevel;
+                const matchesType = !selectedType || job.type === selectedType;
+                const matchesIndustry = !selectedIndustry || job.industry === selectedIndustry;
+
+                return matchesSearch && matchesCompany && matchesLocation && matchesRemote && matchesLevel && matchesType && matchesIndustry;
+            });
+
+            renderTable(filtered);
+        }
+
+        // Event Listeners for Filters
+        [searchInput, companyFilter, locationFilter, remoteFilter, levelFilter, typeFilter, industryFilter].forEach(element => {
+            element.addEventListener('input', filterJobs);
+            element.addEventListener('change', filterJobs);
+        });
+
+        // Clear Filters Action
+        clearFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            companyFilter.value = '';
+            locationFilter.value = '';
+            remoteFilter.value = '';
+            levelFilter.value = '';
+            typeFilter.value = '';
+            industryFilter.value = '';
+            renderTable(jobsData);
+        });
+
+        // Initialize Page
+        populateDropdowns();
+        renderTable(jobsData);
+    </script>
 </body>
 </html>
-
-```
