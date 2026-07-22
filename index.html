@@ -1,9 +1,14 @@
+To fix this, the previous template only provided a basic mock structure instead of your actual dashboard components (search filters, job tables, and your official image logo).
+
+Here is the **complete, updated code** that brings back your original search filters, data table, and image logo wrapper, while successfully adding the **"Fill this form to get personalised job recommendations"** button right below the header:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Job Feed</title>
+    <title>AI Job Feed - Allshore Global</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,29 +20,32 @@
         body {
             background-color: #0b0f19;
             color: #94a3b8;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
-        .logo {
+        /* Logo Box */
+        .logo-box {
             background: #ffffff;
-            padding: 10px 15px;
+            padding: 10px 14px;
             border-radius: 8px;
             display: inline-block;
             margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .logo img {
-            height: 30px;
+        .logo-box img {
+            height: 28px;
             display: block;
         }
 
+        /* Header Section */
         .header-section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .title-row {
@@ -49,7 +57,7 @@
 
         h1 {
             color: #ffffff;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
         }
 
@@ -60,19 +68,17 @@
             font-weight: 700;
             padding: 4px 8px;
             border-radius: 4px;
-            letter-spacing: 0.5px;
         }
 
         .subtitle {
-            font-size: 15px;
+            font-size: 14px;
             color: #94a3b8;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        /* Personalized Job Recommendation Button Styling */
+        /* Personalized Button */
         .recommendation-btn-container {
-            margin-top: 16px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .btn-personalized-jobs {
@@ -85,7 +91,7 @@
             padding: 10px 20px;
             border-radius: 6px;
             text-decoration: none;
-            transition: background-color 0.2s ease, transform 0.1s ease;
+            transition: background-color 0.2s ease;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
@@ -93,17 +99,122 @@
             background-color: #eab308;
         }
 
-        .btn-personalized-jobs:active {
-            transform: scale(0.98);
+        /* Filters Section */
+        .filters-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .search-bar {
+            width: 100%;
+            background-color: #111827;
+            border: 1px: solid #1f2937;
+            border: 1px solid #1f2937;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .filter-select, .filter-input {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            color: #94a3b8;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .clear-filters {
+            color: #facc15;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Jobs Table */
+        .table-container {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            color: #64748b;
+            font-weight: 600;
+            padding: 14px 16px;
+            border-bottom: 1px solid #1f2937;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #1f2937;
+            color: #e2e8f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .job-title {
+            color: #ffffff;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .job-title:hover {
+            color: #facc15;
+        }
+
+        .level-badge {
+            background-color: #1e293b;
+            color: #facc15;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Logo Area -->
-        <div class="logo">
-            <span style="color: #0b0f19; font-weight: bold; font-size: 18px;">Allshore Global</span>
+        <!-- Logo Area (Restored image container) -->
+        <div class="logo-box">
+            <!-- Replace 'logo.png' with your actual image path or URL if hosted -->
+            <img src="logo.png" alt="Allshore Global Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span style="display:none; color: #0b0f19; font-weight: bold; font-size: 16px;">Allshore Global</span>
         </div>
 
         <!-- Header Section -->
@@ -114,14 +225,80 @@
             </div>
             <p class="subtitle">Explore current AI job opportunities and live talent listings updated regularly.</p>
             
-            <!-- Button Added Here -->
+            <!-- Personalized Job Recommendation Button -->
             <div class="recommendation-btn-container">
                 <a href="https://www.allshoreglobal.com/join-as-talent" target="_blank" rel="noopener noreferrer" class="btn-personalized-jobs">
                     Fill this form to get personalised job recommendations
                 </a>
             </div>
         </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="filters-container">
+            <input type="text" class="search-bar" placeholder="Search role title, e.g. LLM Engineer, AI Agent Developer">
+            
+            <div class="filter-row">
+                <select class="filter-select"><option>Company</option></select>
+                <select class="filter-select"><option>All locations</option></select>
+                <select class="filter-select"><option>Remote or onsite</option></select>
+                <select class="filter-select"><option>All experience levels</option></select>
+                <select class="filter-select"><option>All job types</option></select>
+                <select class="filter-select"><option>All industries</option></select>
+                <input type="text" class="filter-input" placeholder="Skill or stack, e.g. PyTorch">
+            </div>
+
+            <div class="filter-row" style="grid-template-columns: 180px 180px;">
+                <input type="text" class="filter-input" placeholder="Min salary">
+                <select class="filter-select"><option>Posted in last 10 days</option></select>
+            </div>
+        </div>
+
+        <!-- Results Counter -->
+        <div class="results-info">
+            <span>103 jobs from the last 10 days</span>
+            <button class="clear-filters">Clear all filters</button>
+        </div>
+
+        <!-- Jobs Listing Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Remote</th>
+                        <th>Level</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="#" class="job-title">Senior Independent AI Engineer / Architect</a>
+                        </td>
+                        <td>A.Team</td>
+                        <td>Americas, Europe, Israel</td>
+                        <td>Yes</td>
+                        <td><span class="level-badge">5-10</span></td>
+                        <td>contract</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="job-title">Applied AI Product Strategy & Revenue Lead</a>
+                        </td>
+                        <td>Prime Intellect</td>
+                        <td>San Francisco</td>
+                        <td>Yes</td>
+                        <td><span class="level-badge">5-10</span></td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </body>
 </html>
+
+```
