@@ -1,440 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Job Feed | Allshore Global Talent</title>
-<style>
-  :root {
-    --brand-dark: #070c1b;
-    --brand-slate: #0f172a;
-    --brand-border: #1e293b;
-    --brand-yellow: #facc15;
-    --brand-yellow-hover: #eab308;
-    --brand-yellow-light: rgba(250, 204, 21, 0.1);
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --card-bg: #0d1322;
-    --card-hover: #162035;
-    --radius: 12px;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--brand-dark);
-    color: var(--text-main);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-  }
-  .wrap {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
-  header {
-    border-bottom: 1px solid var(--brand-border);
-    padding-bottom: 24px;
-    margin-bottom: 28px;
-  }
-  .logo-container {
-    margin-bottom: 22px;
-    display: inline-block;
-    background: #ffffff;
-    padding: 10px 18px;
-    border-radius: var(--radius);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  }
-  .logo-container img {
-    height: 42px;
-    width: auto;
-    display: block;
-  }
-  header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0 0 8px;
-    letter-spacing: -0.02em;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  header h1 span {
-    font-size: 12px;
-    text-transform: uppercase;
-    background: var(--brand-yellow-light);
-    color: var(--brand-yellow);
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    border: 1px solid rgba(250, 204, 21, 0.25);
-  }
-  header p {
-    color: var(--text-muted);
-    margin: 0;
-    font-size: 15px;
-  }
-  .filters {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .filters input, .filters select {
-    font-family: inherit;
-    font-size: 14px;
-    padding: 10px 14px;
-    border: 1px solid var(--brand-border);
-    border-radius: var(--radius);
-    background: var(--card-bg);
-    color: var(--text-main);
-    width: 100%;
-  }
-  .filters input::placeholder {
-    color: var(--text-muted);
-  }
-  .filters input:focus, .filters select:focus {
-    outline: none;
-    border-color: var(--brand-yellow);
-    box-shadow: 0 0 0 2px var(--brand-yellow-light);
-  }
-  .filter-row-wide input { grid-column: 1 / -1; }
-  .filter-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 0 4px;
-  }
-  .clear-btn {
-    font-family: inherit;
-    font-size: 13.5px;
-    background: none;
-    border: none;
-    color: var(--brand-yellow);
-    cursor: pointer;
-    padding: 4px 0;
-    font-weight: 500;
-  }
-  .clear-btn:hover { text-decoration: underline; }
-  #status {
-    font-size: 14px;
-    color: var(--text-muted);
-  }
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--brand-border);
-    border-radius: var(--radius);
-    background: var(--card-bg);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
-  table.job-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-  .job-table th {
-    text-align: left;
-    font-size: 11.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--brand-border);
-    background: var(--brand-slate);
-    position: sticky;
-    top: 0;
-  }
-  .job-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--brand-border);
-    vertical-align: middle;
-  }
-  .job-table tr:last-child td { border-bottom: none; }
-  .job-table tr:hover td { background: var(--card-hover); }
-  .job-table td.title-cell {
-    white-space: normal;
-    min-width: 240px;
-    font-weight: 600;
-    color: #ffffff;
-  }
-  .job-table td.desc-cell {
-    white-space: normal;
-    color: var(--text-muted);
-    font-size: 13.5px;
-    max-width: 340px;
-  }
-  .badge {
-    font-size: 12px;
-    color: var(--brand-yellow);
-    background: var(--brand-yellow-light);
-    padding: 3px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-    font-weight: 500;
-    border: 1px solid rgba(250, 204, 21, 0.2);
-  }
-  .apply-btn {
-    font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 500;
-    padding: 7px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--brand-yellow);
-    background: var(--brand-yellow);
-    color: #070c1b;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-  }
-  .apply-btn:hover { 
-    background: var(--brand-yellow-hover);
-    border-color: var(--brand-yellow-hover);
-  }
-  .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
-    font-size: 15px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Feed</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #94a3b8;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            background: #ffffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .logo img {
+            height: 30px;
+            display: block;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .badge {
+            background-color: rgba(234, 179, 8, 0.15);
+            color: #facc15;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        /* Personalized Job Recommendation Button Styling */
+        .recommendation-btn-container {
+            margin-top: 16px;
+            margin-bottom: 30px;
+        }
+
+        .btn-personalized-jobs {
+            display: inline-flex;
+            align-items: center;
+            background-color: #facc15;
+            color: #0b0f19;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-personalized-jobs:hover {
+            background-color: #eab308;
+        }
+
+        .btn-personalized-jobs:active {
+            transform: scale(0.98);
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="logo-container">
-      <!-- Your embedded Base64 logo -->
-      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEOAyADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD36iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiq1xqFpa5E06K390HJ/KqNx4jsLWynvpn8mzgXdLcSkIiD6nqfYc1zvF0FP2fMubtu/uRoqU2ua2hr0V57qfxa0uy8CxeLLaxubqylvDaRoSI2bBYbuc4Hy9OvNYNh+0X4WuHC3mn6laZ/i2LIo/I5/SugzPYKK5nQfiF4U8SlU0zW7WSZukMjeXJ/3y2CfwrpqACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiqOp6lHp0GeGlb7if1PtWVatChTdSo7JFQhKcuWO5JfahBYRb5m5P3UHVq5m81u6vCVVjDGf4VPJ+pqvHFd6reHBMkjcsx6KP6Ctnbp2goDIPPusZ4HI/wFfJ1sZicwTlGXs6K69/835I9SFKnQsmuaZnWmi3lyysU8uMnln4OPYV5t8UtP1rxn4rt/CejSqtlZKpMK5w0pGS7+wBA/E+terT+JBDr2i6KQovdSEkzR9fLhRScn3J2j8/SuS8P7431rVgMXGp6jPhx1EMblFUH3Kk/gK9ShQw2VYZ4hXd0t932Xkc051MTUVMLL4TQy/DGz8I61qjDybprlprTA+YliF+YHj5q5XUP2aoChbTfEcit2W5twQfxUj+VenSEN4YUt/z8f41BYatPZsEJMlueGjJ7e3pUPP6cJwjUjZSSd73tf5f12KWBk4txeqZ86+I/g14y8Nq8/2EX9snPnWLFyB6lcBh+VS+D/jJ4o8JyJbXEralp6HDW10xLIPRX6j6HI9q+mbm/uLAR3UUn2mxk+7v6qfTP+Ncv4n+H/hX4iQSTeT9g1fHFzCoD5/2h0cfr7ivSo5jRqVPZN2l2fXzT2Zzzw84x590dD4N8d6J440/7RpdxiZADPayYEsR9x3HuOK6avjDV9G8T/CzxZEzSPa3UR3213CcpMvt6j1U/iK+lPhp8R7Lx5pJDBINXt1H2m2B4PbenqpP5Hj0J7jA7uiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAjnmS3geaQ4VBk1xkklxquofdzJIcKOyj/AVreJLs5jtEP+2/9BTNMVdN0uXUZgC7jEY/l+Z/lXyeZ1frmL+rXtThrJ+m/wDl6nqYaPsaXtLe89EXFksdJjFkJjHK65aULnB9T/Ss1tNWzke/vrqNrCFGnluC3G1Rkk1kSSNLK0rks7nJPqa4j41eJv7B8MW3hS1fF5qI8+8IPKRZ4X/gRH5KfWowEoZlW5JU7Qp6qz27JrZ3/wA9R108PC6l70tzD8DeMn8UftBJq85KxXSzQWyH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yvGpWfLCOyW78/L87djkhXhRg4wV2/uO6+Kvxah8LWkuh6LcCfXGXZLMuCLX3Pbf6Dt1PofKfhV8O7nx3rxv9REn9j20m+5lYnNw/Xywe5PVj2HuRTvh18JNW8a3Meo6j5tnoxbc1w4/eXHqI8+v948fWvqbStKsdE0yDTtOtkt7SBdscaDgD+pPc969pKyOMtRxpDEscaqiIAqqowAB0AHpTqKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAMetZN7oEFzl4T5Mh9B8p/CtaiufEYWjiY8laN0aU6s6bvF2OMuNGvbZt3lGQDo0fP/16Yuo6hb/L9omTHZv/AK9dtSMquMMob6ivDlw6oS5sPVcf68rHase2rVIpnlnxN8Xa14f+HNtqmmX/AJN7JfLC0vlq2VKucYIx2FeC3HxB8ea9m3OuapPv4MdsSufwQCvseeytLqEQ3FrBLEDuCSRhlB9cHvSwWtvartt7eKFfSNAv8q96hTlTpRhN3aW/c4ZyUpNpWPkbQ/hB438SSiZtNktI3OWuNQYx/jg/Mfyr2fwb8B9B0B47vWX/ALYvV5CyJtgQ/wC5/F/wLj2r1iitiBFRUUKihVUYAAwAKWiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKilpKACiijFABRRiigAopaTFABRRRQAUUUUAFFFGKACiiigAoooxQAUUYoxQAUUUUAFFFFABRRRigAooooAKKKKACiiigAooooAKKKKACijFLQAlFFFABRRijFABRS0lABRRiigAooxRQAUUUUAFFFFABRRRQAUUUYoAKKWkxQAUUtJQAUUtJigAooxRQAUUUUAFFGKKACiiloASiiigAooxRQAUUtFACUUUUAFFFFABRRiigAooooAKKKKACilooASilpKACiiloASiiigAooooAKKMUtACUUtFAH//2Q==" alt="Allshore Global Logo" style="max-height: 42px; width: auto;" />
+
+    <div class="container">
+        <!-- Logo Area -->
+        <div class="logo">
+            <span style="color: #0b0f19; font-weight: bold; font-size: 18px;">Allshore Global</span>
+        </div>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="title-row">
+                <h1>AI Job Feed</h1>
+                <span class="badge">CURRENT AI JOB FEED</span>
+            </div>
+            <p class="subtitle">Explore current AI job opportunities and live talent listings updated regularly.</p>
+            
+            <!-- Button Added Here -->
+            <div class="recommendation-btn-container">
+                <a href="https://www.allshoreglobal.com/join-as-talent" target="_blank" rel="noopener noreferrer" class="btn-personalized-jobs">
+                    Fill this form to get personalised job recommendations
+                </a>
+            </div>
+        </div>
     </div>
-    <h1>AI Job Feed <span>Current AI Job Feed</span></h1>
-    <p>Explore current AI job opportunities and live talent listings updated regularly.</p>
-  </header>
 
-  <div class="filters filter-row-wide">
-    <input id="titleFilter" type="text" placeholder="Search role title, e.g. LLM Engineer, AI Agent Developer">
-  </div>
-
-  <div class="filters">
-    <input id="companyFilter" type="text" placeholder="Company">
-    <select id="locationFilter"><option value="">All locations</option></select>
-    <select id="remoteFilter">
-      <option value="">Remote or onsite</option>
-      <option value="Yes">Remote only</option>
-      <option value="No">Onsite only</option>
-    </select>
-    <select id="seniorityFilter"><option value="">All experience levels</option></select>
-    <select id="employmentTypeFilter"><option value="">All job types</option></select>
-    <select id="industryFilter"><option value="">All industries</option></select>
-    <input id="tagsFilter" type="text" placeholder="Skill or stack, e.g. PyTorch, LangChain">
-    <input id="salaryMinFilter" type="number" placeholder="Min salary">
-    <select id="daysFilter">
-      <option value="10" selected>Posted in last 10 days</option>
-      <option value="5">Posted in last 5 days</option>
-      <option value="3">Posted in last 3 days</option>
-      <option value="1">Posted today</option>
-    </select>
-  </div>
-
-  <div class="filter-actions">
-    <span id="status">Loading jobs…</span>
-    <button class="clear-btn" id="clearFilters">Clear all filters</button>
-  </div>
-
-  <div class="table-wrap">
-    <table class="job-table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Company</th>
-          <th>Location</th>
-          <th>Remote</th>
-          <th>Level</th>
-          <th>Type</th>
-          <th>Salary</th>
-          <th>Industry</th>
-          <th>Description</th>
-          <th>Posted</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="jobList"></tbody>
-    </table>
-  </div>
-</div>
-
-<script>
-  // Paste the web app URL from your Apps Script deployment here.
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwh-l8K8fCTgRU-VdejYZviQrBcfLTk70AmfjGofnLM-x-LgUo9QUf11Cga0bFp76DAhg/exec';
-
-  const jobListEl = document.getElementById('jobList');
-  const statusEl = document.getElementById('status');
-  const titleInput = document.getElementById('titleFilter');
-  const companyInput = document.getElementById('companyFilter');
-  const locationSelect = document.getElementById('locationFilter');
-  const remoteSelect = document.getElementById('remoteFilter');
-  const senioritySelect = document.getElementById('seniorityFilter');
-  const employmentTypeSelect = document.getElementById('employmentTypeFilter');
-  const industrySelect = document.getElementById('industryFilter');
-  const tagsInput = document.getElementById('tagsFilter');
-  const salaryMinInput = document.getElementById('salaryMinFilter');
-  const daysSelect = document.getElementById('daysFilter');
-  const clearBtn = document.getElementById('clearFilters');
-
-  const allFilterInputs = [
-    titleInput, companyInput, locationSelect, remoteSelect,
-    senioritySelect, employmentTypeSelect, industrySelect,
-    tagsInput, salaryMinInput, daysSelect
-  ];
-
-  let allJobs = [];
-
-  function daysAgo(isoDate) {
-    if (!isoDate) return null;
-    const diffMs = Date.now() - new Date(isoDate).getTime();
-    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
-  }
-
-  function renderJobs(jobs) {
-    jobListEl.innerHTML = '';
-
-    if (!jobs.length) {
-      jobListEl.innerHTML = '<tr><td colspan="11" class="empty">No jobs match these filters right now.</td></tr>';
-      return;
-    }
-
-    jobs.forEach(function (job) {
-      const age = daysAgo(job.datePosted);
-      const ageLabel = age === null ? '—' : age === 0 ? 'Today' : age + 'd ago';
-      const salaryBit = job.salaryMin || job.salaryMax
-        ? [job.salaryMin, job.salaryMax].filter(Boolean).join('–') + (job.salaryCurrency ? ' ' + job.salaryCurrency : '')
-        : '—';
-      const desc = (job.description || '').slice(0, 140) + ((job.description || '').length > 140 ? '…' : '');
-
-      const row = document.createElement('tr');
-      row.innerHTML =
-        '<td class="title-cell"></td>' +   // 0 title
-        '<td></td>' +                       // 1 company
-        '<td></td>' +                       // 2 location
-        '<td></td>' +                       // 3 remote
-        '<td><span class="badge"></span></td>' + // 4 level
-        '<td></td>' +                       // 5 type
-        '<td></td>' +                       // 6 salary
-        '<td></td>' +                       // 7 industry
-        '<td class="desc-cell"></td>' +     // 8 description
-        '<td></td>' +                       // 9 posted
-        '<td><a class="apply-btn" target="_blank" rel="noopener">Apply →</a></td>'; // 10 apply
-
-      const cells = row.querySelectorAll('td');
-      cells[0].textContent = job.title || 'Untitled role';
-      cells[1].textContent = job.company || '—';
-      cells[2].textContent = job.location || '—';
-      cells[3].textContent = job.remote || '—';
-      cells[4].querySelector('.badge').textContent = job.seniority || '—';
-      cells[5].textContent = job.employmentType || '—';
-      cells[6].textContent = salaryBit;
-      cells[7].textContent = job.industry || '—';
-      cells[8].textContent = desc || '—';
-      cells[9].textContent = ageLabel;
-      cells[10].querySelector('.apply-btn').href = job.applyUrl || '#';
-
-      jobListEl.appendChild(row);
-    });
-  }
-
-  function populateOptions(selectEl, jobs, field) {
-    const values = Array.from(new Set(
-      jobs.map(function (j) { return j[field]; }).filter(Boolean)
-    )).sort();
-    values.forEach(function (val) {
-      const opt = document.createElement('option');
-      opt.value = val;
-      opt.textContent = val;
-      selectEl.appendChild(opt);
-    });
-  }
-
-  function populateAllDropdowns(jobs) {
-    populateOptions(locationSelect, jobs, 'location');
-    populateOptions(senioritySelect, jobs, 'seniority');
-    populateOptions(employmentTypeSelect, jobs, 'employmentType');
-    populateOptions(industrySelect, jobs, 'industry');
-  }
-
-  function applyFilters() {
-    const titleQ = titleInput.value.trim().toLowerCase();
-    const companyQ = companyInput.value.trim().toLowerCase();
-    const locQ = locationSelect.value;
-    const remoteQ = remoteSelect.value;
-    const seniorityQ = senioritySelect.value;
-    const employmentTypeQ = employmentTypeSelect.value;
-    const industryQ = industrySelect.value;
-    const tagsQ = tagsInput.value.trim().toLowerCase();
-    const salaryMinQ = salaryMinInput.value ? Number(salaryMinInput.value) : null;
-    const maxDays = Number(daysSelect.value);
-
-    const filtered = allJobs.filter(function (job) {
-      if (titleQ && !(job.title || '').toLowerCase().includes(titleQ)) return false;
-      if (companyQ && !(job.company || '').toLowerCase().includes(companyQ)) return false;
-      if (locQ && job.location !== locQ) return false;
-      if (remoteQ && job.remote !== remoteQ) return false;
-      if (seniorityQ && job.seniority !== seniorityQ) return false;
-      if (employmentTypeQ && job.employmentType !== employmentTypeQ) return false;
-      if (industryQ && job.industry !== industryQ) return false;
-      if (tagsQ && !(job.tags || '').toLowerCase().includes(tagsQ)) return false;
-
-      if (salaryMinQ !== null) {
-        const jobSalary = Number(job.salaryMax || job.salaryMin);
-        if (isNaN(jobSalary) || jobSalary < salaryMinQ) return false;
-      }
-
-      const age = daysAgo(job.datePosted);
-      if (age !== null && age > maxDays) return false;
-
-      return true;
-    });
-
-    renderJobs(filtered);
-  }
-
-  function clearAllFilters() {
-    allFilterInputs.forEach(function (el) {
-      if (el.tagName === 'SELECT') el.selectedIndex = 0;
-      else el.value = '';
-    });
-    daysSelect.value = '10';
-    applyFilters();
-  }
-
-  function loadJobs() {
-    fetch(SCRIPT_URL)
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        allJobs = data.jobs || [];
-        statusEl.textContent = allJobs.length + ' jobs from the last 10 days';
-        populateAllDropdowns(allJobs);
-        renderJobs(allJobs);
-      })
-      .catch(function (err) {
-        statusEl.textContent = 'Could not load jobs. Check SCRIPT_URL is set correctly.';
-        console.error(err);
-      });
-  }
-
-  [titleInput, companyInput, tagsInput, salaryMinInput].forEach(function (el) {
-    el.addEventListener('input', applyFilters);
-  });
-  [locationSelect, remoteSelect, senioritySelect, employmentTypeSelect, industrySelect, daysSelect]
-    .forEach(function (el) { el.addEventListener('change', applyFilters); });
-  clearBtn.addEventListener('click', clearAllFilters);
-
-  loadJobs();
-</script>
 </body>
 </html>
